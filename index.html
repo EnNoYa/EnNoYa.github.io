@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+<style>
+  .darkblue-text {
+    color: darkblue;
+  }
+  btitle {
+    font-family: Lobster, Monospace;
+    font-size: 60px;
+  }
+  p {
+    font-size: 16px;
+    font-family: Monospace;
+  }
+  .thick-green-border {
+    border-color: green;
+    border-width: 10px;
+    border-style: solid;
+    border-radius: 50%;
+  }
+  .smaller-image {
+    width: 180px;
+  }
+  .silver-background {
+    background-color: silver;
+  }
+  #cat-photo-form {
+  background-color: green;
+}
+</style>
+
+</head>
+<body  style=" background-color: silver;">
+  <btitle class="darkblue-text" >Estia Navestian Yaffler</btitle>
+
+<p style="font-family: Monospace; color: blue; font-size: 20px;">Welcome to here</p>
+<p style="font-family: Monospace; color: blue; font-size: 4px; color: gray">although I think you are wasting your time</p>
+
+<a href="https://www.youtube.com/watch?v=o1eHKf-dMwo"><img class="smaller-image" alt="*MY FACE" src="./pixiv61210612.png"></a>
+
+<div class="silver-background">
+  <p>These are my the other personal pages</p>
+  <ul>
+    <li><a href="https://www.facebook.com/profile.php?id=100006096674104">FB</a></li>
+    <li><a href="https://pixiv.me/704669">Pixiv</a></li>
+    <li><a href="https://github.com/EnNoYa?tab=stars">Github</a></li>
+  </ul>
+  <p>Something and nothing</p>
+  <ol>
+    <li>#</li>
+    <li>%</li>
+    <li>$</li>
+  </ol>
+</div>
+
+<form action="/submit-cat-photo" id="cat-photo-form">
+  <label><input type="radio" name="indoor-outdoor" checked> Indoor</label> <br/>
+  <label><input type="radio" name="indoor-outdoor"> Outdoor</label>
+  <label><input type="checkbox" name="personality" checked> Loving</label>
+  <label><input type="checkbox" name="personality"> Lazy</label>
+  <label><input type="checkbox" name="personality"> Energetic</label>
+  <input type="text" placeholder="cat photo URL" required>
+  <button type="submit">Submit</button>
+</form>
+
+  
+</body>
+</html>
