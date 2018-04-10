@@ -46,9 +46,56 @@
 </style>
 
 </head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script >
+   $(document).ready(function() {
+    $("button").click(function(event) {
+      $("p").addClass('animated bounce').css("color","red");
+      var pass=document.getElementById('pass').value;
+
+      if(pass=="test"){
+    $("h6").html("<a  href=./testpage.html>test</a>");
+    $("h6").css( "font-size","100px", "color", "gray");
+
+      }
+      else{pass="wrong";}
+    });
+    var count=0;
+    $("p").mouseover(function(){
+            
+           var co;
+    switch(count){
+    case 0:co="red";
+    break;
+     case 1:co="orange";
+     break;
+     case 2:co="gray";
+     break;
+     case 3:co="green";
+     break;
+     case 4:co="blue";
+     break;
+     case 5:co="purple";
+     break;
+   }
+    $("p").addClass('animated bounce').css("color",co);
+     
+    count++;
+    count%=6;
+   
+     
+ 
+    });
+
+  });
+
+</script>
+
 <body   class="silver-background" >
   <btitle class="darkblue-text" >Estia Navestian Yaffler</btitle>
-  <marquee  height=20 behavior=alternate bgcolor=silver style="color:silver;">YOU CAN'T SEE ME</marquee>
+  <marquee  id="hi" height=20 behavior=alternate bgcolor=silver style="color:silver;">YOU CAN'T SEE ME</marquee>
 
 <p style="font-family: Monospace; color: blue; font-size: 20px;">Welcome to here</p>
 <p style="font-family: Monospace; color: blue; font-size: 4px; color: gray">although I think you are wasting your time</p>
@@ -69,7 +116,7 @@
     <li><img class="mid-image flat-border" alt="bag" src="./20882518_1990680811145122_877372569871137191_n.jpg"></li>
   </ul>
 </div>
-<h3 background="./28167786_2089663444580191_2639355178719003714_n.jpg">
+<h3 id="te" background="./28167786_2089663444580191_2639355178719003714_n.jpg">
 <form   style="text-align: center;  " action="/nothing" id="checkboxmaze">
   <label><input type="radio" name="maze" checked></label> <br/>
   <label><input type="checkbox" name="maze" checked></label>
@@ -472,14 +519,15 @@
   <label><input type="checkbox" name="maze"></label>
   <label><input type="checkbox" name="maze" checked></label>
   <label><input type="checkbox" name="maze"></label> <br/>
-  <input type="text" placeholder="nothing here" required>
-  <button type="submit">click</button><br/>
-  <img  alt="message" src="./17903798_1919847381561799_6868426273771534215_n.jpg">
+  <input id="pass" type="text" placeholder="nothing here" >
+  <button type="button"><em>send</em></button>
+  <h6><img  alt="message" src="./17903798_1919847381561799_6868426273771534215_n.jpg"></h6>
 
 </form>
+  
 <audio  autoplay loop>
   <source src="./MSMM - Vol 2 - Track 1 - Decretum.ogg" type="audio/ogg">
-Your browser does not support the audio element.
+Your browser does not support the audio element. 
 </audio>
 </h3>
 
