@@ -33,7 +33,7 @@
     border-radius: 20%;
   }
   .mid-image{
-    width: 500px;
+    width: 100px;
   }
   .silver-background {
     background-color: silver;
@@ -49,49 +49,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-<script >
-   $(document).ready(function() {
-    $("button").click(function(event) {
-      $("p").addClass('animated bounce').css("color","red");
-      var pass=document.getElementById('pass').value;
-
-      if(pass=="test"){
-    $("h6").html("<a  href=./testpage.html>test</a>");
-    $("h6").css( "font-size","100px", "color", "gray");
-
-      }
-      else{pass="wrong";}
-    });
-    var count=0;
-    $("p").mouseover(function(){
-            
-           var co;
-    switch(count){
-    case 0:co="red";
-    break;
-     case 1:co="orange";
-     break;
-     case 2:co="gray";
-     break;
-     case 3:co="green";
-     break;
-     case 4:co="blue";
-     break;
-     case 5:co="purple";
-     break;
-   }
-    $("p").addClass('animated bounce').css("color",co);
-     
-    count++;
-    count%=6;
-   
-     
- 
-    });
-
-  });
-
-</script>
+<script src="./eff.js"></script>
 
 <body   class="silver-background" >
   <btitle class="darkblue-text" >Estia Navestian Yaffler</btitle>
@@ -110,10 +68,10 @@
     <li><a href="https://github.com/EnNoYa?tab=stars">Github</a></li>
   </ul>
   <p>Something and nothing</p>
-  <ul>
-    <li><img class="mid-image flat-border" alt="Live2D" src="./10628544_1635404820006058_5822027253570203303_n.jpg"></li>
-    <li><img class="mid-image flat-border" alt="Minecraft" src="./21616134_2011798629033340_2377611222147792338_n.jpg"></li>
-    <li><img class="mid-image flat-border" alt="bag" src="./20882518_1990680811145122_877372569871137191_n.jpg"></li>
+  <ul >
+    <li><img id="pic1" class="mid-image flat-border" alt="Live2D" src="./10628544_1635404820006058_5822027253570203303_n.jpg"></li>
+    <li><img id="pic2" class="mid-image flat-border" alt="Minecraft" src="./21616134_2011798629033340_2377611222147792338_n.jpg"></li>
+    <li><img id="pic3" class="mid-image flat-border" alt="bag" src="./20882518_1990680811145122_877372569871137191_n.jpg"></li>
   </ul>
 </div>
 <h3 id="te" background="./28167786_2089663444580191_2639355178719003714_n.jpg">
