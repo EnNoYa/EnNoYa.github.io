@@ -4,7 +4,7 @@
       var pass=document.getElementById('pass').value;
 
       if(pass=="test"){
-    $("h6").html("<a  href=./testpage.html>test</a>");
+    $("h6").html("<a  href=./npp.html>test</a>");
     $("h6").css( "font-size","100px", "color", "gray");
 
       }

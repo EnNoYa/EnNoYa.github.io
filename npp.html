@@ -6,7 +6,12 @@
 
 <style>
 	.section{margin:0 0 10px;}
-
+    .bagr{
+        float:left;
+         background: linear-gradient(to bottom, rgba(0,0,0,0) 1%,rgba(0,0,0,0.75) 5%,rgba(0,0,0,0.75) 70%,rgba(0,0,0,0.75) 90%,rgba(0,0,0,0) 100%);
+         height: 500px;
+	width:1140px;
+    }
 .div-rt{
 	position:relative;
 	float:right;	
@@ -24,6 +29,13 @@
 
 .lf-content{margin-right:240px;}
 
+  .small-image{width: 150px;}
+   .flat-border{
+   	border-color: black;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 20%;
+   }
   .ironfont{	
   	background: -webkit-linear-gradient(#eee, #333);
   -webkit-background-clip: text;
@@ -34,10 +46,10 @@
 
 <head>
 
-<script type="text/javascript" src="./jjss/blafonlin.js"></script>
+<script src="./jjss/blafonlin.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-<script type="text/javascript"></script>
+<script src="./jjss/eff2.js"></script>
 
  
 
@@ -47,19 +59,43 @@
 
 </head>
 
-<body style="background: url(./pic/pixiv32563827.jpg);  background-repeat: no-repeat;   background-size: cover;" >  <div class="div-lf">
+<body style="background: url(./pic/pixiv32563827.jpg);  background-repeat: no-repeat;   background-size: cover;" >  <div class="div-lf ">
 	<btitle  style="font-size:100px" class="webfont_monotype ironfont" > Tokamak-Labor </btitle></div>
 	<div class="div-rt webfont_monotype ">
-		<h1 style="color:rgba(0,0,0,0);">1 </h1>
-		<h1 style="color:rgba(0,0,0,0); ">1 </h1>
-    <h1 class="ironfont">about me</h1>
-    <h1 class="ironfont">other page</h1>
-    <h1 class="ironfont">S.T I made</h1>
-
+		<h1 ><img style="width: 85px; "  id="nupic" src="./pic/3686680582_c4e2a0c7fa.gif" alt="
+FEHLER"></h1>
+		
+    <h1 id="am" class="ironfont" style="text-align: center;">about me</h1>
+    <h1 id="op" class="ironfont" style="text-align: center;">other page</h1>
+    <h1 id="im" class="ironfont" style="text-align: center;">S.T I made</h1>
 	</div>
+    <div>
 
+    	<div id="bio"  style="display: none; font-size:25px; color:gray; text-align: center;" class="bagr"></br>555555555555555555555</br>555555555555555555555</br>555555555555555555555</div>
+
+        <div id="li" style="display: none; font-size:25px; color:gray; text-align: center;" class="bagr">
+  		<ul></br>
+   			 <li><a href="https://www.facebook.com/profile.php?id=100006096674104">FB</a></li>
+   			 <li><a href="https://pixiv.me/704669">Pixiv</a></li>
+  			 <li><a href="https://github.com/EnNoYa?tab=stars">Github</a></li>
+ 		 </ul>
+        </div>
+
+
+        <div id="pr" style="display: none;" class="bagr"></br></br>
+        	<img id="pic1" class="small-image flat-border" alt="Live2D" src="./pic/10628544_1635404820006058_5822027253570203303_n.jpg">
+        	</br>
+    <img id="pic2" class="small-image flat-border" alt="Minecraft" src="./pic/21616134_2011798629033340_2377611222147792338_n.jpg"></br>
+    <img id="pic3" class="small-image flat-border" alt="bag" src="./pic/20882518_1990680811145122_877372569871137191_n.jpg">
+        </div>
+    </div>
 
 
 </body>
+
+<audio  autoplay id="mic" >
+  <source src="./mis/Causion Nuclear Fusion__靈知的太陽信仰.ogg" type="audio/ogg">
+Your browser does not support the audio element. 
+</audio>
 
 </html>
