@@ -7,17 +7,33 @@
 <style>
 	.section{margin:0 0 10px;}
 
-.div-rt{position:relative;float:right;width:230px;margin-left:-230px;background-color:red;}
+.div-rt{
+	position:relative;
+	float:right;	
+	margin-left:-230px;
+	width:200px;
+	font-size: 15px;
+	color:rgb(220,220,220);
+	background: linear-gradient(to bottom, rgba(0,0,0,0) 1%,rgba(0,0,0,0.75) 15%,rgba(0,0,0,0.75) 50%,rgba(0,0,0,0.75) 85%,rgba(0,0,0,0) 100%);}
 
-.div-lf{float:left;width:100%;background-color:green;}
+.div-lf{float:left;
+	width:100%;
+	background: linear-gradient(to bottom, rgba(0,0,0,0) 1%,rgba(0,0,0,0.75) 15%,rgba(0,0,0,0.75) 50%,rgba(0,0,0,0.75) 85%,rgba(0,0,0,0) 100%);
+}
 
 .lf-content{margin-right:240px;}
+
+  .ironfont{	
+  	background: -webkit-linear-gradient(#eee, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  }
 
 </style>
 
 <head>
 
-<script type="text/javascript" src="http://fast.fonts.com/jsapi/4605e407-63a4-43a7-ba15-5b6dfc903eee.js"></script>
+<script type="text/javascript" src="./fonlin.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script type="text/javascript"></script>
@@ -30,8 +46,14 @@
 
 </head>
 
-<body style="background: url(./pixiv32563827.jpg);  background-repeat: no-repeat;   background-size: cover;" >
-	<btitle class="webfont_monotype" >Tokamak-Labor</btitle>
+<body style="background: url(./pixiv32563827.jpg);  background-repeat: no-repeat;   background-size: cover;" >  <div class="div-lf">
+	<btitle  style="font-size:100px" class="webfont_monotype ironfont" > Tokamak-Labor </btitle></div>
+	<div class="div-rt webfont_monotype ">
+    <h1 class="ironfont">about me</h1>
+    <h1 class="ironfont">other page</h1>
+    <h1 class="ironfont">S.T I make</h1>
+
+	</div>
 
 
 
