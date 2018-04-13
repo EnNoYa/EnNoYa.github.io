@@ -32,7 +32,7 @@
       $("#pic1").click(function(){
         $("#pic2").fadeOut('fast');
         $("#pic3").fadeOut('fast');
-        $("#pic1").delay(200).animate({width: "700px"});
+        $("#pic1").delay(200).animate({width: "55vw"});
     });
 
       $("#pic1").mouseleave(function(){
@@ -44,7 +44,7 @@
  $("#pic2").click(function(){
         $("#pic1").fadeOut('30');
         $("#pic3").fadeOut('30');
-        $("#pic2").delay(200).animate({width: "700px"});
+        $("#pic2").delay(200).animate({width: "60vw"});
     });
 
       $("#pic2").mouseleave(function(){
@@ -56,7 +56,7 @@
        $("#pic3").click(function(){
         $("#pic2").fadeOut('30');
         $("#pic1").fadeOut('30');
-        $("#pic3").delay(200).animate({width: "500px"});
+        $("#pic3").delay(200).animate({width: "40vw"});
     });
 
       $("#pic3").mouseleave(function(){
