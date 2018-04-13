@@ -1,5 +1,5 @@
   $(document).ready(function() {
-     
+     $("body").delay("200").fadeIn('1000');
     $("#nupic").click(function(event) {
       var mic = document.getElementById("mic"); 
       if(!mic.paused){
