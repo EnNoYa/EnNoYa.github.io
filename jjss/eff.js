@@ -59,13 +59,7 @@
     });
 
   
-$("label").mouseover(function(){
-            
-           if(this.checked()==true){this.checked()=false;}
-           else{this.checked()=true;}
 
- 
- 
-    });
 
   });
+
