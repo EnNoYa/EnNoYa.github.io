@@ -1,4 +1,9 @@
+  jQuery.get('./testtext.txt', function(data) {
+    alert(data);
+     });
+ 
   $(document).ready(function() {
+
     $("button").click(function(event) {
       $("p").addClass('animated bounce').css("color","red");
       var pass=document.getElementById('pass').value;
