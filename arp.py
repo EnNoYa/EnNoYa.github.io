@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import socket as se
 import struct
 import uuid
@@ -6,8 +5,36 @@ import sys
 import os
 import binascii
 
+def receive(Socket):
+    packet = getPacketInfo()
 
-def getSocketInformation():
+    frame = Socket.recvfrom(2048)
+    header = frame[0][0:14]
+    arp_body = frame[0][14:42]
+
+    arp_body_temp = struct.unpack("!2s2s1s1s2s6s4s6s4s", arp_body)
+    header_temp = struct.unpack("!6s6s2s", header)
+
+    packet['frame_type'] = header_temp[2]
+    packet['target_mac_addr'] = binascii.hexlify(header_temp[0],':')
+    packet['source_mac_addr'] = binascii.hexlify(header_temp[1],':')
+    packet['opcode'] = arp_body_temp[4]
+    packet['source_mac'] = binascii.hexlify(arp_body_temp[5],':')
+    packet['source_ip'] = se.inet_ntoa(arp_body_temp[6])
+    packet['target_mac'] = binascii.hexlify(arp_body_temp[7],':')
+    packet['target_ip'] = se.inet_ntoa(arp_body_temp[8])
+
+    return packet
+
+def getMac():
+    List = []
+    Mac = uuid.getnode()
+    for i in range(6):
+        List = [Mac % 0x100] + List
+        Mac //= 0x100
+    return List
+
+def getSocketInfo():
 
     #建立 socket 並且接收所有型態封包
     socket = se.socket(se.AF_PACKET, se.SOCK_RAW, se.htons(0x0003))
@@ -19,20 +46,7 @@ def getSocketInformation():
 
     return socket
 
-def getMac():
-    List = []
-    Mac = uuid.getnode()
-    for i in range(6):
-        List = [Mac % 0x100] + List
-        Mac //= 0x100
-    return List
-
-def getPacketInformation():
-    # arpin = {
-    #     'my_mac' : struct.pack('!6B',*getMac()),
-    #     'my_ip' : se.inet_aton(se.gethostbyname(se.gethostname())),
-    #     'arp_type' : struct.pack('!H', 0x0806)
-    # }
+def getPacketInfo():
     packet = {
 
         #ARP 標頭
@@ -53,33 +67,12 @@ def getPacketInformation():
     }
     return packet
 
-def receive(Socket):
-    packet = getPacketInformation()
-
-    frame = Socket.recvfrom(2048)
-    header = frame[0][0:14]
-    arp_body = frame[0][14:42]
-
-    header_temp = struct.unpack("!6s6s2s", header)
-    arp_body_temp = struct.unpack("!2s2s1s1s2s6s4s6s4s", arp_body)
-
-    packet['target_mac_addr'] = binascii.hexlify(header_temp[0],':')
-    packet['source_mac_addr'] = binascii.hexlify(header_temp[1],':')
-    packet['frame_type'] = header_temp[2]
-
-    packet['opcode'] = arp_body_temp[4]
-    packet['source_mac'] = binascii.hexlify(arp_body_temp[5],':')
-    packet['source_ip'] = se.inet_ntoa(arp_body_temp[6])
-    packet['target_mac'] = binascii.hexlify(arp_body_temp[7],':')
-    packet['target_ip'] = se.inet_ntoa(arp_body_temp[8])
-
-    return packet
 
 def listening(ip=""):
     print("### ARP sniffer mode ###")
     
     while True:
-        arp_packet = receive(getSocketInformation())
+        arp_packet = receive(getSocketInfo())
       
         if arp_packet['frame_type'] != b'\x08\x06':
             continue
@@ -97,8 +90,8 @@ def listening(ip=""):
         print("Get ARP packet - Who has " + arp_packet['target_ip'] + " ?      Tell " + arp_packet['source_ip'])
 
 def question(ip):
-    arp_packet = getPacketInformation()
-    arp_socket = getSocketInformation()
+    arp_packet = getPacketInfo()
+    arp_socket = getSocketInfo()
 
     arp_packet['target_ip'] = se.inet_aton(ip)
 
@@ -122,7 +115,7 @@ def question(ip):
             break
 
 def spoof(fack_mac , target_ip):
-    Socket = getsocketinformation()
+    Socket = getSocketInfor()
 
     fack_mac = str.encode(fack_mac)
     fack_mac = binascii.unhexlify(fack_mac.replace(b':', b''))
@@ -140,7 +133,7 @@ def spoof(fack_mac , target_ip):
 
         print("fack arp responce :")
 
-        fack_arp_responce = getPacketInformation()
+        fack_arp_responce = getPacketInfo()
         
         arp_request['source_mac'] = bytes.decode(arp_request['source_mac'])
         arp_request['source_mac'] = arp_request['source_mac'].replace(':','')
