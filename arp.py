@@ -81,15 +81,11 @@ def listening(ip=""):
         if ip!="" and arp_packet['target_ip'] != ip and arp_packet['source_ip'] != ip:
             continue
 
-        if arp_packet['opcode'] == b'\x00\x01':
-            print("arp request")
-        
-        if arp_packet['opcode'] == b'\x00\x02':
-            print("arp response")
-
         print("Get ARP packet - Who has " + arp_packet['target_ip'] + " ?      Tell " + arp_packet['source_ip'])
 
 def question(ip):
+    print("### ARP query mode ###")
+
     arp_packet = getPacketInfo()
     arp_socket = getSocketInfo()
 
@@ -97,12 +93,12 @@ def question(ip):
 
     arp_packet_list = [ i for i in arp_packet.values() ]
 
-    arp_socket.send(b''.join(arp_packet_list))
+
     
     arp_packet['source_ip'] = se.inet_ntoa(arp_packet['source_ip'])
     arp_packet['target_ip'] = se.inet_ntoa(arp_packet['target_ip'])
   
-    print("Get ARP packet - Who has " + arp_packet['target_ip'] + " ?      Tell " + arp_packet['source_ip'])
+    arp_socket.send(b''.join(arp_packet_list))
 
     while True:
         arp_responce = receive(arp_socket)
@@ -115,7 +111,7 @@ def question(ip):
             break
 
 def spoof(fack_mac , target_ip):
-    Socket = getSocketInfor()
+    Socket = getSocketInfo()
 
     fack_mac = str.encode(fack_mac)
     fack_mac = binascii.unhexlify(fack_mac.replace(b':', b''))
