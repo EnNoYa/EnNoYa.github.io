@@ -10,7 +10,7 @@
 #include<arpa/inet.h> /*inet_ntoa()和inet_addr()這兩個函式，包含在 arpa/inet.h*/  
 #include<signal.h>    /*程序對訊號進行處理*/  
 #include<netinet/in.h>    /*網際網路地址族*/  
-  
+#include<netinet/udp.h>   
 #include"ping.h"  
 #define IP_HSIZE sizeof(struct iphdr)   /*定義IP_HSIZE為ip頭部長度*/  
 #define IPVERSION  4   /*定義IPVERSION為4，指出用ipv4*/  
@@ -107,7 +107,7 @@ void send_ping()
 
     
     /*ICMP頭部結構體變數初始化*/  
-    icmp_hdr=(struct icmphdr *)(sendbuf+len1);  /*字串指標*/  
+    //icmp_hdr=(struct icmphdr *)(sendbuf+len1);  /*字串指標*/  
     icmp_hdr->type=8;    /*初始化ICMP訊息型別type*/  
     icmp_hdr->code=0;    /*初始化訊息程式碼code*/  
     icmp_hdr->icmp_id=pid;   /*把程序標識碼初始給icmp_id*/  
@@ -121,12 +121,12 @@ void send_ping()
     icmp_hdr->checksum=checksum((u8 *)icmp_hdr,len);  /*計算校驗和*/  
   
 
-    udp_hdr=(struct udp_hdr *)(sendbuf+len1);
-    udp_hdr->source=101;
-    udp_hdr->dest=66666;
-    udp_hdr->len=64;
-    memset(udp_hdr->data,0xff,datalen);
-    gettimeofday((struct timeval *)udp_hdr->data,NULL); /* 獲取當前時間*/  
+    udp_hdr=(struct udphdr *)(sendbuf+len1);
+    udp_hdr->source=htons(101);
+    udp_hdr->dest=htons(34567);
+    udp_hdr->len=htons(64);
+    //memset(udp_hdr->data,0xff,datalen);
+  
     udp_hdr->check=checksum((u8 *)udp_hdr,len);  
 
     sendto(sockfd,sendbuf,len,0,(struct sockaddr *)&dest,sizeof (dest)); /*經socket傳送資料*/  
@@ -143,7 +143,7 @@ void recv_reply()
     nrecv = 0;  
     len = sizeof(from);   /*傳送ping應答訊息的主機IP*/  
   
-    while(nrecv < 4)
+    while(1)//nrecv < 4)
     {  
         /*經socket接收資料,如果正確接收返回接收到的位元組數，失敗返回0.*/
         if((n=recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len))<0)
@@ -153,12 +153,12 @@ void recv_reply()
             bail("recvfrom error");  
         }  
   
-        gettimeofday(&recvtime, NULL);   /*記錄收到應答的時間*/  
+        //gettimeofday(&recvtime, NULL);   /*記錄收到應答的時間*/  
 
         if(handle_pkt())    /*接收到錯誤的ICMP應答資訊*/  
-            continue;  
+            break;  
 
-        nrecv++;  
+        //nrecv++;  
     }  
   
     get_statistics(nsent, nrecv);     /*統計ping命令的檢測結果*/  
@@ -206,12 +206,19 @@ int handle_pkt()
   
     icmp = (struct icmphdr *)(recvbuf + ip_hlen);  
   
-    if(checksum((u8 *)icmp, ip_datalen)) /*計算校驗和*/  
-       return -1;  
+   // if(checksum((u8 *)icmp, ip_datalen)) /*計算校驗和*/  
+   //    return -1;  
   
-    if(icmp->icmp_id != pid)  
-        return -1;  
+   // if(icmp->icmp_id != pid)  
+  //      return -1;  
+    
+    if(icmp->code==11)
+    	printf("return");
+    	return 1;
 
+    if(icmp->code==3)
+    	printf("fin");
+    	return 0;
     sendtime = (struct timeval *)icmp->data; /*傳送時間*/  
     rtt = ((&recvtime)->tv_sec - sendtime->tv_sec) * 1000 + ((&recvtime)->tv_usec - sendtime->tv_usec)/1000.0; /* 往返時間*/  
     /*列印結果*/  
