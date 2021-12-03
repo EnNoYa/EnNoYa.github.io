@@ -18,7 +18,7 @@
 
 static int gttl=0;
 static int pport=33434;
-
+static int maxttl=0;
 
 
 struct itimerval val_alarm = {
@@ -33,19 +33,25 @@ int main(int argc,char **argv){
   struct hostent    *host; 
   int         on = 1;  
   
-  if( argc < 2){       
+  
+  if( argc < 3){       
+    printf("need TTl and hostname");  
+    exit(1);  
+  }  
+  
+  if( argc < 3){       
     printf("need hostname");  
     exit(1);  
   }  
 
 
-  if((host = gethostbyname(argv[1])) == NULL){     
-    printf("DNS not found", argv[0]);
+  if((host = gethostbyname(argv[2])) == NULL){     
+    printf("DNS not found");
     exit(1);  
   }  
   
-  hostname = argv[1]; 
-  
+  hostname = argv[2]; 
+  maxttl=atoi(argv[1]);
   memset(&dest,0,sizeof dest);  
   dest.sin_family=PF_INET;      
   dest.sin_port=ntohs(0);     
@@ -65,7 +71,7 @@ int main(int argc,char **argv){
   
   set_sighandler();
 
-  printf("Tracerouting %s(%s): %d bytes data in UDP packets.\n", argv[1], inet_ntoa(dest.sin_addr), datalen);  
+  printf("Tracerouting %s(%s): %d bytes data in UDP packets.\n", argv[2], inet_ntoa(dest.sin_addr), datalen);  
   
   setitimer(ITIMER_REAL, &val_alarm, NULL); //定時  
 
@@ -129,7 +135,7 @@ void recv_reply(){
     recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len);
   
     //處理資料
-    if(handle_pkt())  {
+    if(handle_pkt()||maxttl<=gttl)  {
       break;  
     }
   }    
@@ -200,13 +206,22 @@ int handle_pkt(){
 ///設定訊號處理
 void set_sighandler(){  
   act_alarm.sa_handler = alarm_handler;  
+  
+  if(sigaction(SIGALRM, &act_alarm, NULL) == -1){
+		
+	}
+
+	act_int.sa_handler = int_handler;  
+  if(sigaction(SIGINT, &act_int, NULL) == -1){
+	
+	}
 
 }  
 
  //發接統計  
 void get_statistics(int nsent,int nrecv)  
 {  
-    printf("--- %s ping statistics ---\n",inet_ntoa(dest.sin_addr)); 
+    printf("--------------------\n"); 
     printf("%d packets transmitted, %d received, %0.0f%% ""packet loss\n",  \
     nsent,nrecv,1.0*(nsent-nrecv)/nsent*100);  
 }  
