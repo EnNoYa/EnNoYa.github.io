@@ -1,73 +1,228 @@
+#include<stdio.h>  
+#include<stdlib.h>  
+#include<sys/time.h>  
+#include<unistd.h>    
+#include<string.h>  
+#include<sys/socket.h>    
+#include<sys/types.h>  
+#include<netdb.h> 
+#include<errno.h> 
+#include<arpa/inet.h> 
+#include<signal.h>    
+#include<netinet/in.h>    
+#include<netinet/udp.h>  
+#include"traceroute.h"  
+#define IP_HSIZE sizeof(struct iphdr)   
+#define IPVERSION  4   
 
-#define ICMP_ECHOREPLY 0 /* Echo應答*/  
-#define ICMP_ECHO   /*Echo請求*/  
-  
-#define BUFSIZE 1500    /*傳送快取最大值*/  
-#define DEFAULT_LEN 56  /**ping訊息資料預設大小/  
-  
-/*資料類型別名*/  
-typedef unsigned char u8;  
-typedef unsigned short u16;  
-typedef unsigned int u32;  
-  
-/*ICMP訊息頭部*/  
-struct icmphdr {  
-    u8 type;     /*定義訊息型別*/  
-    u8 code;    /*定義訊息程式碼*/  
-    u16 checksum;   /*定義校驗*/  
-    union{  
-        struct{  
-        u16 id;  
-        u16 sequence;  
-    }echo;  
-    u32 gateway;  
-    struct{  
-        u16 unsed;  
-        u16 mtu;  
-    }frag; /*pmtu實現*/  
-    }un;  
-  /*ICMP資料佔位符*/  
-    u8 data[0];  
-#define icmp_id un.echo.id  
-#define icmp_seq un.echo.sequence  
-};  
-#define ICMP_HSIZE sizeof(struct icmphdr)  
-/*定義一個IP訊息頭部結構體*/  
-struct iphdr {  
-    u8 hlen:4, ver:4;   /*定義4位首部長度，和IP版本號為IPV4*/  
-    u8 tos;				/*8位服務型別TOS*/  
-    u16 tot_len;		/*16位總長度*/  
-    u16 id;				/*16位標誌位*/  
-    u16 frag_off;		/*3位標誌位*/  
-    u8 ttl;				/*8位生存週期*/  
-    u8 protocol;		/*8位協議*/  
-    u16 check;			/*16位IP首部校驗和*/  
-    u32 saddr;			/*32位源IP地址*/  
-    u32 daddr;			/*32位目的IP地址*/  
-};  
-  
-char *hostname;				/*被ping的主機名*/  
-int datalen = DEFAULT_LEN;  /*ICMP訊息攜帶的資料長度*/  
-char sendbuf[BUFSIZE];      /*傳送字串陣列*/   
-char recvbuf[BUFSIZE];      /*接收字串陣列*/  
-int nsent;					/*傳送的ICMP訊息序號*/  
-int nrecv;					/*接收的ICMP訊息序號*/  
-pid_t pid;					/*ping程式的程序PID*/  
-struct timeval recvtime;    /*收到ICMP應答的時間戳*/  
-int sockfd;					/*傳送和接收原始套接字*/  
-struct sockaddr_in dest;    /*被ping的主機IP*/  
-struct sockaddr_in from;    /*傳送ping應答訊息的主機IP*/  
-struct sigaction act_alarm;  
-struct sigaction act_int;  
-  
-/*函式原型*/  
-void alarm_handler(int);		/*SIGALRM處理程式*/  
-void int_handler(int);			/*SIGINT處理程式*/  
-void set_sighandler();			/*設定訊號處理程式*/  
-void send_ping();				/*傳送ping訊息*/  
-void recv_reply();				/*接收ping應答*/  
-u16 checksum(u8 *buf, int len); /*計算校驗和*/  
-int handle_pkt();				/*ICMP應答訊息處理*/  
-void get_statistics(int, int);  /*統計ping命令的檢測結果*/  
-void bail(const char *);		/*錯誤報告*/
 
+static int gttl=0;
+static int pport=33434;
+
+
+
+struct itimerval val_alarm = {
+  .it_interval.tv_sec = 1,      
+  .it_interval.tv_usec = 0,  
+  .it_value.tv_sec = 0,  
+  .it_value.tv_usec = 1  
+};  
+
+
+int main(int argc,char **argv){  
+  struct hostent    *host; 
+  int         on = 1;  
+  
+  if( argc < 2){       
+    printf("need hostname");  
+    exit(1);  
+  }  
+
+
+  if((host = gethostbyname(argv[1])) == NULL){     
+    printf("DNS not found", argv[0]);
+    exit(1);  
+  }  
+  
+  hostname = argv[1]; 
+  
+  memset(&dest,0,sizeof dest);  
+  dest.sin_family=PF_INET;      
+  dest.sin_port=ntohs(0);     
+  dest.sin_addr=*(struct in_addr *)host->h_addr_list[0];
+
+
+  if((sockfd = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0){  
+    perror("RAW socket created error");  
+    exit(1);  
+  }  
+
+ 
+  setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));   
+
+  setuid(getuid()); 
+  pid = getpid(); 
+  
+  set_sighandler();
+
+  printf("Tracerouting %s(%s): %d bytes data in UDP packets.\n", argv[1], inet_ntoa(dest.sin_addr), datalen);  
+  
+  setitimer(ITIMER_REAL, &val_alarm, NULL); //定時  
+
+  
+  recv_reply(); //接收icmp
+  
+  return 0;  
+}  
+
+
+void send_udp(void){  
+    struct iphdr    *ip_hdr;   
+    struct icmphdr  *icmp_hdr;  
+    struct udphdr   *udp_hdr;
+    int len;  
+    int len1;  
+
+      
+    //ip頭部
+    ip_hdr=(struct iphdr *)sendbuf; 
+    ip_hdr->hlen=sizeof(struct iphdr)>>2;  
+    ip_hdr->ver=IPVERSION;    
+    ip_hdr->tos=0;  
+    ip_hdr->tot_len=IP_HSIZE+sizeof(struct udphdr)+datalen; 
+    ip_hdr->id=0;    
+    ip_hdr->frag_off=0; 
+    ip_hdr->protocol=IPPROTO_UDP;
+    ip_hdr->ttl=++gttl;
+    ip_hdr->daddr=dest.sin_addr.s_addr;  
+    len1=ip_hdr->hlen<<2;  
+
+    
+    //UDP頭部 
+    udp_hdr=(struct udphdr *)(sendbuf+len1);
+    udp_hdr->source=htons((getpid() & 0xffff) | 0x8000);
+    udp_hdr->dest=htons(++pport);
+    udp_hdr->len=htons(64);
+
+    len=ip_hdr->tot_len; 
+    udp_hdr->check=0;
+    udp_hdr->check=checksum((u8 *)udp_hdr,len);  
+
+    sendto(sockfd,sendbuf,len,0,(struct sockaddr *)&dest,sizeof (dest)); 
+    
+    nsent++;
+}  
+
+//接收icmp
+void recv_reply(){  
+  int     n;  
+  int     len;  
+  int     errno;  
+  nsent=0;
+  n = 0;
+  nrecv = 0;  
+  len = sizeof(from);  
+  
+  while(1){  
+
+    //接收資料
+    recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len);
+  
+    //處理資料
+    if(handle_pkt())  {
+      break;  
+    }
+  }    
+  get_statistics(nsent, nrecv);     //發接統計  
+}  
+
+ //計算校驗和
+u16 checksum(u8 *buf,int len)  
+{  
+    u32 sum = 0;  
+    u16 *cbuf;  
+  
+    cbuf = (u16 *)buf;  
+  
+    while(len > 1)
+  {  
+    sum += *cbuf++;  
+    len -= 2;  
+    }  
+  
+    if(len)
+  {
+        sum += *(u8 *)cbuf;  
+  }
+  
+  sum = (sum >> 16) + (sum & 0xffff);  
+  sum += (sum >> 16);  
+
+  return ~sum;  
+}  
+
+//ICMP處理
+int handle_pkt(){  
+  struct iphdr    *ip;  
+  struct icmphdr    *icmp;  
+  int         ip_hlen;  
+  u16         ip_datalen;    
+
+  ip = (struct iphdr *)recvbuf;  
+
+  ip_hlen = ip->hlen << 2;  
+  ip_datalen = ntohs(ip->tot_len) - ip_hlen;  
+
+  icmp = (struct icmphdr *)(recvbuf + ip_hlen);  
+
+
+  if(checksum((u8 *)icmp, ip_datalen)){
+    return 0;  
+  }
+  
+
+
+
+  if(icmp->type==11){ 
+    nrecv++; 
+    printf("%d bytes from %s:ttl=%d \n",ip_datalen,inet_ntoa(from.sin_addr),gttl);
+  
+    return 0;
+  }
+  else if(icmp->type==3){ 
+    nrecv++; 
+    printf("%d bytes from %s:ttl=%d \n",ip_datalen,inet_ntoa(from.sin_addr),gttl);
+    return 1;  
+  }
+  
+}  
+
+///設定訊號處理
+void set_sighandler(){  
+  act_alarm.sa_handler = alarm_handler;  
+
+}  
+
+ //發接統計  
+void get_statistics(int nsent,int nrecv)  
+{  
+    printf("--- %s ping statistics ---\n",inet_ntoa(dest.sin_addr)); 
+    printf("%d packets transmitted, %d received, %0.0f%% ""packet loss\n",  \
+    nsent,nrecv,1.0*(nsent-nrecv)/nsent*100);  
+}  
+
+  
+ //SIGINT中斷訊號 
+void int_handler(int sig)  
+{  
+    get_statistics(nsent,nrecv);    
+    close(sockfd);   
+    exit(1);  
+}  
+
+ //SIGALRM終止程序  
+void alarm_handler(int signo)  
+{  
+    send_udp();    
+  
+}
