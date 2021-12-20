@@ -16,7 +16,9 @@
 #define IP_HSIZE sizeof(struct iphdr)   
 #define IPVERSION  4   
 
-#define REV(X) ((( X >> 28 )& 0x0000000f ) |(( X >> 20 ) & 0x000000f0)|(( X  >> 12) & 0x00000f00)|(( X >> 4 ) & 0x0000f000)|(( X << 4 ) & 0x000f0000)|(( X << 12 ) & 0x00f00000)|(( X << 20 ) & 0x0f000000)|(( X << 28 ) & 0xf0000000 ))
+//#define REV(X) ((( X >> 28 )& 0x0000000f ) |(( X >> 20 ) & 0x000000f0)|(( X  >> 12) & 0x00000f00)|(( X >> 4 ) & 0x0000f000)|(( X << 4 ) & 0x000f0000)|(( X << 12 ) & 0x00f00000)|(( X << 20 ) & 0x0f000000)|(( X << 28 ) & 0xf0000000 ))
+
+#define REV(X) ((( X >> 24 )& 0x000000ff ) |(( X  >> 8) & 0x0000ff00)|(( X << 8 ) & 0x00ff0000)|(( X << 24 ) & 0xff000000))
 
 static int timeout=100;
 
@@ -86,7 +88,7 @@ int main(int argc,char **argv){
   dest.sin_port=ntohs(0);     
   dest.sin_addr=subnetip;
   
-    printf("PING %s (data size = %d, id = , seq =  , timeout = %d\n", inet_ntoa(dest.sin_addr), datalen,timeout); 
+    printf("PING %s (data size = %d, id = , seq = %d , timeout = %d ms)\n", inet_ntoa(dest.sin_addr), datalen,i+1,timeout); 
   send_icmp();  
   
 
