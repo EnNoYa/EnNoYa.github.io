@@ -1,0 +1,12 @@
+jupyterlab
+pip
+numba
+numpy
+flask
+torch==1.9.0+cu111
+jieba
+pypi-kenlm
+pypinyin
+pycorrector
+transformers       
+#這行先拿掉kenlm==0.0.0

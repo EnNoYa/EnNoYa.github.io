@@ -1,0 +1,16 @@
+FROM pytorch/pytorch:latest
+WORKDIR /app
+COPY BERTserver.zip .           
+COPY requirements.txt .
+RUN apt-get update
+RUN apt-get -y install zip
+RUN apt-get -y install g++ 
+RUN apt-get -y install python3 python3-pip
+RUN python3 -m pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
+RUN unzip BERTserver.zip            
+RUN mkdir /root/.pycorrector             
+RUN mkdir /root/.pycorrector/datasets      
+RUN cp zh_giga.no_cna_cmn.prune01244.klm  /root/.pycorrector/datasets/
+ENTRYPOINT ["sh", "-c"," python3 correcter_server_bert.py  & jupyter lab --ip=0.0.0.0 --allow-root "]        
+EXPOSE 12345 
+EXPOSE 8888
