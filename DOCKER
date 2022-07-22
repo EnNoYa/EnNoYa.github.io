@@ -3,3 +3,23 @@ https://mega.nz/file/yvpz0LpB#NIaVhh4awBLPslsqRaMr9ypczgQItZusUzxs_JJiyWY
 
 https://github.com/pytorch/pytorch/releases?page=1
 https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch/tags
+
+
+21.12  21.09 pytor
+  1.10.0前(1.9)   21.09   21.08
+  
+  
+install  cancel  python3     change   pytorch address
+ 
+  pip upgrade
+run change 
+flask production mode
+https://flask.palletsprojects.com/en/2.1.x/tutorial/deploy/
+https://flask.palletsprojects.com/en/2.1.x/deploying/gunicorn/
+
+
+
+expose: 顯示用
+
+多劇本
+盡量寫成一行  &&
