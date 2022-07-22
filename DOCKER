@@ -16,6 +16,7 @@ run change
 flask production mode
 https://flask.palletsprojects.com/en/2.1.x/tutorial/deploy/
 https://flask.palletsprojects.com/en/2.1.x/deploying/gunicorn/
+wsgi
 nvcr.io/nvidia/pytorch:xx
 SHELL
 
